@@ -3,34 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Project - Main Branch</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-            text-align: center;
-        }
-        .container {
-            padding: 2rem;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #1a73e8;
-        }
-    </style>
+    <title>Punjab Bus Tracker - ਪੰਜਾਬ ਬੱਸ ਟਰੈਕਰ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body>
-    <div class="container">
-        <h1></h1>
-        <p>.</p>
-        <p></p>
+<body class="light-mode" data-lang="en">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-bus"></i>
+                    <span data-key="site-title">Punjab Bus Tracker</span>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#home" data-key="nav-home">Home</a></li>
+                    <li><a href="#search" data-key="nav-search">Search</a></li>
+                    <li><a href="#routes" data-key="nav-routes">Routes</a></li>
+                    <li><a href="#about" data-key="nav-about">About</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-controls">
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <select id="languageSelect" class="lang-select">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="pa">ਪੰਜਾਬੀ</option>
+                    </select>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-sun" id="themeIcon"></i>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title" data-key="hero-title">Track Your Bus in Real-Time</h1>
+                    <p class="hero-subtitle" data-key="hero-subtitle">Get live updates on Punjab bus locations, routes, and arrival times</p>
+                    
+                    <!-- Search Form -->
+                    <div class="search-form-container">
+                        <form class="bus-search-form" id="busSearchForm">
+                            <div class="search-inputs">
+                                <div class="input-group">
+                                    <label for="fromLocation" data-key="from-label">From</label>
+                                    <input type="text" id="fromLocation" placeholder="Enter departure location" data-key-placeholder="from-placeholder">
+                                    <i class="fas fa-map-marker-alt input-icon"></i>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="toLocation" data-key="to-label">To</label>
+                                    <input type="text" id="toLocation" placeholder="Enter destination" data-key-placeholder="to-placeholder">
+                                    <i class="fas fa-flag-checkered input-icon"></i>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="busNumber" data-key="bus-number-label">Bus Number (Optional)</label>
+                                    <input type="text" id="busNumber" placeholder="Enter bus number" data-key-placeholder="bus-number-placeholder">
+                                    <i class="fas fa-bus input-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="search-btn">
+                                <i class="fas fa-search"></i>
+                                <span data-key="search-button">Search Buses</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Section -->
+        <section class="search-results" id="search-results" style="display: none;">
+            <div class="container">
+                <h2 data-key="search-results-title">Available Buses</h2>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Map Section -->
+        <section class="map-section" id="map-section">
+            <div class="container">
+                <h2 data-key="live-tracking-title">Live Bus Tracking</h2>
+                <div class="map-container">
+                    <div id="map" class="bus-map"></div>
+                    <div class="map-controls">
+                        <button class="map-btn" id="locateBtn" title="Find My Location">
+                            <i class="fas fa-location-arrow"></i>
+                        </button>
+                        <button class="map-btn" id="refreshBtn" title="Refresh Buses">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Routes Section -->
+        <section class="routes-section" id="routes">
+            <div class="container">
+                <h2 data-key="popular-routes-title">Popular Routes</h2>
+                <div class="routes-grid">
+                    <div class="route-card">
+                        <div class="route-info">
+                            <h3>Chandigarh ↔ Patiala</h3>
+                            <p data-key="route-distance">Distance: 65 km</p>
+                            <p data-key="route-duration">Duration: ~2 hours</p>
+                        </div>
+                        <div class="route-actions">
+                            <button class="route-btn" data-key="track-route">Track Route</button>
+                        </div>
+                    </div>
+                    
+                    <div class="route-card">
+                        <div class="route-info">
+                            <h3>Ludhiana ↔ Jalandhar</h3>
+                            <p data-key="route-distance">Distance: 45 km</p>
+                            <p data-key="route-duration">Duration: ~1.5 hours</p>
+                        </div>
+                        <div class="route-actions">
+                            <button class="route-btn" data-key="track-route">Track Route</button>
+                        </div>
+                    </div>
+                    
+                    <div class="route-card">
+                        <div class="route-info">
+                            <h3>Amritsar ↔ Delhi</h3>
+                            <p data-key="route-distance">Distance: 450 km</p>
+                            <p data-key="route-duration">Duration: ~8 hours</p>
+                        </div>
+                        <div class="route-actions">
+                            <button class="route-btn" data-key="track-route">Track Route</button>
+                        </div>
+                    </div>
+                    
+                    <div class="route-card">
+                        <div class="route-info">
+                            <h3>Bathinda ↔ Chandigarh</h3>
+                            <p data-key="route-distance">Distance: 180 km</p>
+                            <p data-key="route-duration">Duration: ~4 hours</p>
+                        </div>
+                        <div class="route-actions">
+                            <button class="route-btn" data-key="track-route">Track Route</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <h2 data-key="features-title">Why Choose Punjab Bus Tracker?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-location-dot"></i>
+                        </div>
+                        <h3 data-key="real-time-title">Real-time Tracking</h3>
+                        <p data-key="real-time-desc">Get live location updates of all Punjab buses with GPS accuracy</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 data-key="arrival-time-title">Arrival Predictions</h3>
+                        <p data-key="arrival-time-desc">Know exactly when your bus will arrive at your stop</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h3 data-key="route-info-title">Route Information</h3>
+                        <p data-key="route-info-desc">Complete details about bus routes, stops, and schedules</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 data-key="notifications-title">Smart Notifications</h3>
+                        <p data-key="notifications-desc">Get alerts for delays, route changes, and arrival times</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-key="footer-about">About Punjab Bus Tracker</h3>
+                    <p data-key="footer-description">Making public transportation in Punjab more accessible and efficient through real-time tracking technology.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 data-key="footer-links">Quick Links</h3>
+                    <ul>
+                        <li><a href="#" data-key="footer-privacy">Privacy Policy</a></li>
+                        <li><a href="#" data-key="footer-terms">Terms of Service</a></li>
+                        <li><a href="#" data-key="footer-contact">Contact Us</a></li>
+                        <li><a href="#" data-key="footer-help">Help & Support</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 data-key="footer-transport">Transport Partners</h3>
+                    <ul>
+                        <li>PRTC (Punjab Roadways)</li>
+                        <li>PUNBUS</li>
+                        <li>Private Operators</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Punjab Bus Tracker. <span data-key="footer-rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+        <div class="spinner"></div>
+        <p data-key="loading-text">Loading...</p>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="translations.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
