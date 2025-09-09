@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Test</title>
+    <style>
+        body { font-family: sans-serif; }
+        hr { margin: 20px 0; }
+        button { margin-top: 5px; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; }
+        .notification { color: #fff; background-color: #28a745; font-weight: bold; padding: 5px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Tracker Test</h1>
+    
+    <input type="text" id="busIdInput" placeholder="Enter Bus ID (e.g., UP16DA1234)">
+    <button onclick="joinRoom()">1. Join Room</button>
+
+    <hr>
+
+    <div>
+        <h2>Passenger Controls</h2>
+        <button onclick="imWaiting()">2. Tell Server I'm Waiting at Stop</button>
+    </div>
+
+    <hr>
+
+    <div>
+        <h2>Driver Controls</h2>
+        <button onclick="sendLocation()">3. Send Location Update</button>
+    </div>
+    
+    <h3>Log:</h3>
+    <div id="log"></div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        const socket = io("http://localhost:3001");
+        const busIdInput = document.getElementById('busIdInput');
+        const logDiv = document.getElementById('log');
+
+        // --- Core Functions ---
+        function joinRoom() {
+            const busId = busIdInput.value;
+            if (busId) {
+                socket.emit('joinBusRoom', busId);
+                log('Attempting to join room: ' + busId);
+            } else {
+                alert('Please enter a Bus ID.');
+            }
+        }
+
+        // --- Passenger Functions ---
+        function imWaiting() {
+            const busId = busIdInput.value;
+            if (busId) {
+                // These are the coordinates of the passenger's bus stop.
+                // It's intentionally very close to the driver's starting point for easy testing.
+                const stopLocation = {
+                    latitude: 28.6140,
+                    longitude: 77.2091
+                };
+
+                socket.emit('imWaitingAtStop', { busId: busId, stop: stopLocation });
+                log('Sent "imWaitingAtStop" event to server for bus: ' + busId);
+            } else {
+                alert('Please enter a Bus ID before setting your waiting status.');
+            }
+        }
+
+        // Listen for the special arrival notification
+        socket.on('busArriving', (data) => {
+            log(`<div class="notification">NOTIFICATION: ${data.msg}</div>`);
+        });
+
+        // --- Driver Functions ---
+        function sendLocation() {
+            const busId = busIdInput.value;
+            if (busId) {
+                // To guarantee the notification triggers, we'll send a location
+                // that is extremely close to the passenger's stop.
+                const locationData = {
+                    busId: busId,
+                    latitude: 28.6141,
+                    longitude: 77.2092
+                };
+                socket.emit('updateLocation', locationData);
+                log('Sent location update: ' + JSON.stringify(locationData));
+            } else {
+                alert('Please enter a Bus ID to send a location.');
+            }
+        }
+
+        // Listen for general location updates
+        socket.on('locationUpdate', (data) => {
+            log('<strong style="color: green;">Received location update:</strong> ' + JSON.stringify(data));
+        });
+
+        function log(message) {
+            logDiv.innerHTML = message + '<br>' + logDiv.innerHTML;
+        }
+    </script>
+</body>
+</html>
