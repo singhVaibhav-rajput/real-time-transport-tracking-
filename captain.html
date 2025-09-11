@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bus Mantra Captain</title>
+<style>
+  :root {
+    --primary-color: #2563eb;
+    --secondary-color: #f59e0b;
+    --accent-color: #10b981;
+    --background-color: #e0f0ff;
+    --surface-color: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-light: 0 1px 5px rgba(0,0,0,0.1);
+    --shadow-medium: 0 6px 15px rgba(0,0,0,0.1);
+    --shadow-heavy: 0 12px 30px rgba(0,0,0,0.15);
+    --transition: all 0.3s ease;
+  }
+  [data-theme="dark"] {
+    --background-color: #0f172a;
+    --surface-color: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --shadow-light: 0 1px 5px rgba(0,0,0,0.7);
+    --shadow-medium: 0 4px 6px rgba(0,0,0,0.7);
+    --shadow-heavy: 0 10px 25px rgba(0,0,0,0.8);
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0; padding: 0;
+    background: rgb(102, 126, 234);
+    color: var(--text-primary);
+    transition: var(--transition);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--surface-color);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+  }
+  select, button#dark-mode-toggle {
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--border-color);
+    background: rgb(102, 126, 234);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  select:hover, select:focus, button#dark-mode-toggle:hover {
+    background: var(--primary-color);
+    color: white;
+  }
+  main {
+    max-width: 600px;
+    margin: 2rem auto 3rem;
+    background: var(--surface-color);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow-medium);
+  }
+  .page {
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+  }
+  .page.active {
+    display: block;
+  }
+  h2 {
+    margin-top: 0;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1.8rem;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  input[type="text"], input[type="tel"], input[type="file"], select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--background-color);
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus, input[type="tel"]:focus, input[type="file"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-color);
+  }
+  button.primary-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 1rem;
+    box-shadow: 0 8px 18px rgba(37,99,235,0.5);
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  button.primary-btn:hover:not(:disabled) {
+    background: #1e40af;
+    transform: translateY(-3px);
+  }
+  button.primary-btn:disabled {
+    background: var(--border-color);
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .message {
+    text-align: center;
+    font-weight: 600;
+    color: var(--secondary-color);
+    min-height: 1.4em;
+    margin-top: 0.5rem;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  /* Multi-row grid layout for personal details form */
+  .grid-two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .grid-two-column > div {
+    display: flex;
+    flex-direction: column;
+  }
+  @media(max-width:600px) {
+    main {
+      margin: 1rem;
+      padding: 1.5rem;
+    }
+    .grid-two-column {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* Accessibility */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important; height: 1px !important;
+    padding: 0 !important; margin: -1px !important;
+    overflow: hidden !important; clip: rect(0,0,0,0) !important;
+    border: 0 !important;
+  }
+  /* Dashboard styles */
+  .profile-info, .route-search {
+    margin-bottom: 2rem;
+  }
+  .profile-info p, .route-search p {
+    margin: 0.3rem 0;
+  }
+  .route-results {
+    background: var(--background-color);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    font-size: 1rem;
+    line-height: 1.3;
+    min-height: 100px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Bus Mantra Captain</h1>
+  <div>
+    <select id="lang-select" aria-label="Select Language" title="Select Language">
+      <option value="en" selected>English</option>
+      <option value="hi">हिन्दी</option>
+      <option value="pa">ਪੰਜਾਬੀ</option>
+    </select>
+    <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">🌙</button>
+  </div>
+</header>
+
+<main>
+  <!-- Pages: Login / License / Personal / Dashboard -->
+  <section id="page-login" class="page active" aria-labelledby="login-title" tabindex="0">
+    <h2 id="login-title">Login / Signup</h2>
+    <form id="form-login" novalidate>
+      <label for="login-mobile">Mobile Number</label>
+      <input type="tel" id="login-mobile" name="mobile" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="Enter mobile number" autocomplete="tel" aria-describedby="login-mobile-desc" />
+      <span id="login-mobile-desc" class="sr-only">Enter 10 digit mobile number starting with 6 to 9</span>
+
+      <div id="otp-group" style="display:none;">
+        <label for="login-otp">One Time Password (OTP)</label>
+        <input type="text" id="login-otp" name="otp" maxlength="6" pattern="[0-9]{6}" placeholder="Enter OTP" aria-describedby="otp-desc" />
+        <span id="otp-desc" class="sr-only">Enter 6 digit OTP sent to your mobile</span>
+      </div>
+
+      <button type="submit" id="login-btn" class="primary-btn" disabled>Send OTP</button>
+      <div class="message" id="login-message" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section id="page-license" class="page" aria-labelledby="license-title" tabindex="0">
+    <h2 id="license-title">Driving License Upload</h2>
+    <form id="form-license" novalidate enctype="multipart/form-data">
+      <label for="license-front">Front Side Photo</label>
+      <input type="file" id="license-front" name="licenseFront" accept="image/*" required aria-required="true" />
+
+      <label for="license-back">Back Side Photo</label>
+      <input type="file" id="license-back" name="licenseBack" accept="image/*" required aria-required="true" />
+
+      <label for="license-number">License Number</label>
+      <input type="text" id="license-number" name="licenseNumber" required maxlength="20" placeholder="Enter license number" aria-required="true" />
+
+      <button type="submit" class="primary-btn">Submit License Info</button>
+      <div class="message" id="license-message" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section id="page-personal" class="page" aria-labelledby="personal-title" tabindex="0">
+    <h2 id="personal-title">Personal Details</h2>
+    <form id="form-personal" novalidate>
+      <div class="grid-two-column">
+        <div>
+          <label for="personal-name">Full Name</label>
+          <input type="text" id="personal-name" name="name" required placeholder="Enter your name" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-dob">Date of Birth</label>
+          <input type="date" id="personal-dob" name="dob" required aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-address">Address</label>
+          <input type="text" id="personal-address" name="address" required placeholder="Enter address" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-aadhaar">Adhaar Card Number</label>
+          <input type="text" id="personal-aadhaar" name="aadhaar" maxlength="12" required placeholder="Enter Adhaar card number" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-contact">Contact Number</label>
+          <input type="tel" id="personal-contact" name="contact" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="Enter contact number" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-emergency">Emergency Contact Number</label>
+          <input type="tel" id="personal-emergency" name="emergencyContact" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="Enter emergency contact number" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-nationality">Nationality</label>
+          <input type="text" id="personal-nationality" name="nationality" required placeholder="Enter nationality" aria-required="true" />
+        </div>
+        <div>
+          <label for="personal-experience">Experience (years)</label>
+          <input type="number" id="personal-experience" name="experience" min="0" max="50" required placeholder="Enter years of experience" aria-required="true" />
+        </div>
+      </div>
+      <button type="submit" class="primary-btn">Submit Personal Details</button>
+      <div class="message" id="personal-message" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section id="page-dashboard" class="page" aria-labelledby="dashboard-title" tabindex="0">
+    <h2 id="dashboard-title">Dashboard</h2>
+
+    <div class="profile-info" aria-label="User Profile Information">
+      <h3>Profile</h3>
+      <p><strong>Name:</strong> <span id="profile-name">-</span></p>
+      <p><strong>Date of Birth:</strong> <span id="profile-dob">-</span></p>
+      <p><strong>Address:</strong> <span id="profile-address">-</span></p>
+      <p><strong>Adhaar Card No.:</strong> <span id="profile-aadhaar">-</span></p>
+      <p><strong>Contact:</strong> <span id="profile-contact">-</span></p>
+      <p><strong>Emergency Contact:</strong> <span id="profile-emergency">-</span></p>
+      <p><strong>Nationality:</strong> <span id="profile-nationality">-</span></p>
+      <p><strong>Experience:</strong> <span id="profile-experience">-</span> years</p>
+    </div>
+
+    <div class="route-search" aria-label="Bus Route Finder">
+      <h3>Bus Route Search</h3>
+      <label for="source-point">Source</label>
+      <input type="text" id="source-point" placeholder="Enter source point" autocomplete="off" />
+
+      <label for="destination-point">Destination</label>
+      <input type="text" id="destination-point" placeholder="Enter destination point" autocomplete="off" />
+
+      <button id="search-buses-btn" class="primary-btn">Search Buses</button>
+      <div id="bus-count" role="status" aria-live="polite" style="margin-top:0.75rem;"></div>
+
+      <label for="bus-number-input" style="margin-top:1.5rem;">Enter Your Assigned Bus Number</label>
+      <input type="text" id="bus-number-input" placeholder="Enter bus number" autocomplete="off" />
+      <button id="show-route-btn" class="primary-btn">Show Route</button>
+
+      <div id="bus-route-result" class="route-results" aria-live="polite" style="margin-top:1rem;"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  // Data storage (simulate backend with localStorage or memory)
+  let userData = {
+    mobile: '',
+    licenseFront: null,
+    licenseBack: null,
+    licenseNumber: '',
+    personalDetails: {},
+    assignedBusNumber: '',
+    source: '',
+    destination: ''
+  };
+
+  // Translation dictionary
+  const translations = {
+    en: {
+      loginTitle: "Login / Signup",
+      mobileLabel: "Mobile Number",
+      otpLabel: "One Time Password (OTP)",
+      sendOtp: "Send OTP",
+      verifyOtp: "Verify OTP",
+      otpSentMsg: "OTP sent to ",
+      otpVerifiedMsg: "OTP verified! Redirecting...",
+      invalidMobileMsg: "Enter valid 10-digit mobile number starting with 6-9",
+      invalidOtpMsg: "Invalid OTP. Try again.",
+      licenseTitle: "Driving License Upload",
+      frontLabel: "Front Side Photo",
+      backLabel: "Back Side Photo",
+      licenseNumberLabel: "License Number",
+      licensePlaceholder: "Enter license number",
+      licenseSubmitBtn: "Submit License Info",
+      licenseSuccess: "License information submitted successfully!",
+      licenseError: "Please fill all fields correctly.",
+      personalTitle: "Personal Details",
+      personalSubmitBtn: "Submit Personal Details",
+      personalSuccess: "Personal details submitted!",
+      personalError: "Please fill all fields correctly.",
+      dashboardTitle: "Dashboard",
+      profileHeading: "Profile",
+      busRouteHeading: "Bus Route Search",
+      sourceLabel: "Source",
+      destinationLabel: "Destination",
+      searchBusesBtn: "Search Buses",
+      busesFoundMsg: (count) => `Number of buses running on this route: ${count}`,
+      enterBusNumberLabel: "Enter Your Assigned Bus Number",
+      showRouteBtn: "Show Route",
+      routeResultMsg: (src, dst) => `Precise route from ${src} to ${dst}`,
+      routeNotFoundMsg: "Please enter valid bus number and route points.",
+      langSelectLabel: "Select Language",
+      darkModeLabel: "Toggle Dark Mode"
+    },
+    hi: {
+      loginTitle: "लॉगिन / साइनअप",
+      mobileLabel: "मोबाइल नंबर",
+      otpLabel: "वन टाइम पासवर्ड (ओटीपी)",
+      sendOtp: "ओटीपी भेजें",
+      verifyOtp: "ओटीपी सत्यापित करें",
+      otpSentMsg: "ओटीपी भेजा गया: ",
+      otpVerifiedMsg: "ओटीपी सत्यापित! रिडायरेक्ट हो रहा है...",
+      invalidMobileMsg: "6-9 से शुरू होने वाला 10 अंकों का मोबाइल नंबर दर्ज करें",
+      invalidOtpMsg: "अमान्य ओटीपी। पुनः प्रयास करें।",
+      licenseTitle: "ड्राइविंग लाइसेंस अपलोड",
+      frontLabel: "सामने का फोटो",
+      backLabel: "पीछे का फोटो",
+      licenseNumberLabel: "लाइसेंस नंबर",
+      licensePlaceholder: "लाइसेंस नंबर दर्ज करें",
+      licenseSubmitBtn: "लाइसेंस जानकारी जमा करें",
+      licenseSuccess: "लाइसेंस जानकारी सफलतापूर्वक जमा हुई!",
+      licenseError: "कृपया सभी फ़ील्ड सही तरीके से भरें।",
+      personalTitle: "व्यक्तिगत विवरण",
+      personalSubmitBtn: "व्यक्तिगत विवरण जमा करें",
+      personalSuccess: "व्यक्तिगत विवरण सफलतापूर्वक जमा!",
+      personalError: "कृपया सभी फ़ील्ड सही तरीके से भरें।",
+      dashboardTitle: "डैशबोर्ड",
+      profileHeading: "प्रोफ़ाइल",
+      busRouteHeading: "बस मार्ग खोज",
+      sourceLabel: "शुरुआत",
+      destinationLabel: "समाप्ति",
+      searchBusesBtn: "बसें खोजें",
+      busesFoundMsg: (count) => `इस मार्ग पर चल रही बसों की संख्या: ${count}`,
+      enterBusNumberLabel: "अपनी बस नंबर दर्ज करें",
+      showRouteBtn: "मार्ग दिखाएं",
+      routeResultMsg: (src, dst) => `${src} से ${dst} तक सटीक मार्ग`,
+      routeNotFoundMsg: "कृपया सही बस नंबर और मार्ग दर्ज करें।",
+      langSelectLabel: "भाषा चुनें",
+      darkModeLabel: "डार्क मोड चालू/बंद करें"
+    },
+    pa: {
+      loginTitle: "ਲਾਗਿਨ / ਸਾਈਨਅਪ",
+      mobileLabel: "ਮੋਬਾਈਲ ਨੰਬਰ",
+      otpLabel: "ਇੱਕ ਵਾਰੀ ਪੁੱਲ ਆਉਣ ਵਾਲਾ ਕੋਡ (ਓਟੀਪੀ)",
+      sendOtp: "ਓਟੀਪੀ ਭੇਜੋ",
+      verifyOtp: "ਓਟੀਪੀ ਸੱਚੁ ਕਰੋ",
+      otpSentMsg: "ਓਟੀਪੀ ਭੇਜਿਆ ਗਿਆ: ",
+      otpVerifiedMsg: "ਓਟੀਪੀ ਸੱਚਾ ਹੋ ਗਿਆ! ਕੰਮ ਕਰ ਰਿਹਾ ਹੈ...",
+      invalidMobileMsg: "6-9 ਨਾਲ ਸ਼ੁਰੂ ਹੋਣ ਵਾਲਾ 10 ਅੰਕ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+      invalidOtpMsg: "ਗਲਤ ਓਟੀਪੀ। ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+      licenseTitle: "ਡਰਾਈਵਿੰਗ ਲਾਇਸੈਂਸ ਅਪਲੋਡ",
+      frontLabel: "ਅੱਗੇ ਭਾਗ ਦੀ ਫੋਟੋ",
+      backLabel: "ਪਿੱਛੇ ਭਾਗ ਦੀ ਫੋਟੋ",
+      licenseNumberLabel: "ਲਾਇਸੈਂਸ ਨੰਬਰ",
+      licensePlaceholder: "ਲਾਇਸੈਂਸ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+      licenseSubmitBtn: "ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ ਜਮ੍ਹਾਂ ਕਰੋ",
+      licenseSuccess: "ਲਾਇਸੈਂਸ ਜਾਣਕਾਰੀ ਸਫਲਤਾਪੂਰਵਕ ਜਮ੍ਹਾਂ ਹੋਈ!",
+      licenseError: "ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੇ ਖੇਤਰ ਸਹੀ ਤਰੀਕੇ ਨਾਲ ਭਰੋ।",
+      personalTitle: "ਵਿਆਕਤੀਗਤ ਵੇਰਵੇ",
+      personalSubmitBtn: "ਵਿਆਕਤੀਗਤ ਵੇਰਵੇ ਜਮ੍ਹਾਂ ਕਰੋ",
+      personalSuccess: "ਵਿਆਕਤੀਗਤ ਵੇਰਵੇ ਸਫਲਤਾਪੂਰਵਕ ਜਮ੍ਹਾਂ!",
+      personalError: "ਕਿਰਪਾ ਕਰਕੇ ਸਾਰੇ ਖੇਤਰ ਸਹੀ ਤਰੀਕੇ ਨਾਲ ਭਰੋ।",
+      dashboardTitle: "ਡੈਸ਼ਬੋਰਡ",
+      profileHeading: "ਪ੍ਰੋਫਾਈਲ",
+      busRouteHeading: "ਬੱਸ ਰੂਟ ਖੋਜ",
+      sourceLabel: "ਸਰੋਤ",
+      destinationLabel: "ਮੰਜ਼ਿਲ",
+      searchBusesBtn: "ਬੱਸਾਂ ਖੋਜੋ",
+      busesFoundMsg: (count) => `ਇਸ ਰੂਟ 'ਤੇ ਚੱਲ ਰਹੀਆਂ ਬੱਸਾਂ ਦੀ ਗਿਣਤੀ: ${count}`,
+      enterBusNumberLabel: "ਆਪਣਾ ਸੀ.ਐੱਨ. ਨੰਬਰ ਦਰਜ ਕਰੋ",
+      showRouteBtn: "ਰਾਹ ਦੱਸੋ",
+      routeResultMsg: (src, dst) => `${src} ਤੋਂ ${dst} ਤੱਕ ਸਹੀ ਰਾਹ`,
+      routeNotFoundMsg: "ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਬੱਸ ਨੰਬਰ ਅਤੇ ਰੂਟ ਦਿਓ",
+      langSelectLabel: "ਭਾਸ਼ਾ ਚੁਣੋ",
+      darkModeLabel: "ਡਾਰਕ ਮੋਡ ਟੌਗਲ ਕਰੋ"
+    }
+  };
+
+  // State & Utils
+  let currentPage = 'page-login';
+  let currentLang = 'en';
+  let otpSent = false;
+  const simulatedOTP = '123456'; // for demo
+
+  // Elements cache
+  const pages = {
+    login: document.getElementById('page-login'),
+    license: document.getElementById('page-license'),
+    personal: document.getElementById('page-personal'),
+    dashboard: document.getElementById('page-dashboard')
+  };
+  const loginForm = document.getElementById('form-login');
+  const loginMobileInput = document.getElementById('login-mobile');
+  const loginOtpGroup = document.getElementById('otp-group');
+  const loginOtpInput = document.getElementById('login-otp');
+  const loginBtn = document.getElementById('login-btn');
+  const loginMsg = document.getElementById('login-message');
+  const licenseForm = document.getElementById('form-license');
+  const licenseMsg = document.getElementById('license-message');
+  const personalForm = document.getElementById('form-personal');
+  const personalMsg = document.getElementById('personal-message');
+  const langSelect = document.getElementById('lang-select');
+  const darkToggle = document.getElementById('dark-mode-toggle');
+  const profileDisplay = {
+    name: document.getElementById('profile-name'),
+    dob: document.getElementById('profile-dob'),
+    address: document.getElementById('profile-address'),
+    aadhaar: document.getElementById('profile-aadhaar'),
+    contact: document.getElementById('profile-contact'),
+    emergency: document.getElementById('profile-emergency'),
+    nationality: document.getElementById('profile-nationality'),
+    experience: document.getElementById('profile-experience')
+  };
+  const sourceInput = document.getElementById('source-point');
+  const destInput = document.getElementById('destination-point');
+  const busCountDisplay = document.getElementById('bus-count');
+  const busNumberInput = document.getElementById('bus-number-input');
+  const showRouteBtn = document.getElementById('show-route-btn');
+  const busRouteResult = document.getElementById('bus-route-result');
+
+  // User data object to hold registered info
+  const user_Data = {};
+
+  // Utility functions
+  function switchPage(pageId) {
+    Object.values(pages).forEach(p => p.classList.remove('active'));
+    pages[pageId].classList.add('active');
+    pages[pageId].focus();
+    currentPage = pageId;
+  }
+  function translateUI() {
+    const t = translations[currentLang];
+    // Login page
+    document.getElementById('login-title').textContent = t.loginTitle;
+    document.querySelector('label[for="login-mobile"]').textContent = t.mobileLabel;
+    document.querySelector('label[for="login-otp"]').textContent = t.otpLabel;
+    loginMobileInput.placeholder = t.mobileLabel;
+    loginOtpInput.placeholder = t.otpLabel;
+    loginBtn.textContent = otpSent ? t.verifyOtp : t.sendOtp;
+    loginMsg.textContent = '';
+    // License page
+    document.getElementById('license-title').textContent = t.licenseTitle;
+    document.querySelector('label[for="license-front"]').textContent = t.frontLabel;
+    document.querySelector('label[for="license-back"]').textContent = t.backLabel;
+    document.querySelector('label[for="license-number"]').textContent = t.licenseNumberLabel;
+    document.getElementById('license-number').placeholder = t.licensePlaceholder;
+    licenseForm.querySelector('button').textContent = t.licenseSubmitBtn;
+    licenseMsg.textContent = '';
+    // Personal page
+    document.getElementById('personal-title').textContent = t.personalTitle;
+    personalForm.querySelector('button').textContent = t.personalSubmitBtn;
+    personalMsg.textContent = '';
+    // Dashboard page
+    document.getElementById('dashboard-title').textContent = t.dashboardTitle;
+    // Profile
+    pages.dashboard.querySelector('.profile-info h3').textContent = t.profileHeading;
+    // Bus route
+    pages.dashboard.querySelector('.route-search h3').textContent = t.busRouteHeading;
+    pages.dashboard.querySelector('label[for="source-point"]').textContent = t.sourceLabel;
+    pages.dashboard.querySelector('label[for="destination-point"]').textContent = t.destinationLabel;
+    document.getElementById('search-buses-btn').textContent = t.searchBusesBtn;
+    document.querySelector('label[for="bus-number-input"]').textContent = t.enterBusNumberLabel;
+    showRouteBtn.textContent = t.showRouteBtn;
+    busCountDisplay.textContent = '';
+    busRouteResult.textContent = '';
+  }
+
+  // Validate mobile
+  function isValidMobile(mobile) {
+    return /^[6-9]\d{9}$/.test(mobile);
+  }
+  // Validate OTP - 6 digit numeric
+  function isValidOtp(otp) {
+    return /^\d{6}$/.test(otp);
+  }
+
+  // Simulate bus count on route - simplistic static data for demo
+  function getBusCountOnRoute(src, dst) {
+    const key = src.toLowerCase() + '->' + dst.toLowerCase();
+    const routes = {
+      'amritsar->jalandhar': 7,
+      'ludhiana->patiala': 5,
+      'jalandhar->ludhiana': 4,
+      'patiala->amritsar': 3,
+      'chandigarh->ludhiana': 6
+    };
+    return routes[key] || 0;
+  }
+
+  // Simulate route info for bus number and route
+  function getRouteForBus(busNo, src, dst) {
+    const validBusNo = /^PN\d{4}$/i;
+    if (!validBusNo.test(busNo) || !src || !dst) return null;
+    return `Route for bus <b>${busNo.toUpperCase()}</b>: ${src} ➔ ${dst} via major stops on Punjab highway.`;
+  }
+
+  // Initialize UI & events
+  function init() {
+    translateUI();
+
+    // Login form input enable/disable
+    loginMobileInput.addEventListener('input', () => {
+      if (!otpSent) {
+        loginBtn.disabled = !isValidMobile(loginMobileInput.value);
+      }
+    });
+
+    loginOtpInput.addEventListener('input', () => {
+      if (otpSent) {
+        loginBtn.disabled = !isValidOtp(loginOtpInput.value);
+      }
+    });
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!otpSent) {
+        if (!isValidMobile(loginMobileInput.value)) {
+          loginMsg.textContent = translations[currentLang].invalidMobileMsg;
+          return;
+        }
+        otpSent = true;
+        loginOtpGroup.style.display = 'block';
+        loginOtpInput.value = '';
+        loginOtpInput.disabled = false;
+        loginBtn.textContent = translations[currentLang].verifyOtp;
+        loginBtn.disabled = true;
+        loginMsg.textContent = translations[currentLang].otpSentMsg + loginMobileInput.value;
+        userData.mobile = loginMobileInput.value;
+      } else {
+        if (!isValidOtp(loginOtpInput.value) || loginOtpInput.value !== simulatedOTP) {
+          loginMsg.textContent = translations[currentLang].invalidOtpMsg;
+          return;
+        }
+        loginMsg.textContent = translations[currentLang].otpVerifiedMsg;
+        // Proceed to license page after short delay
+        setTimeout(() => {
+          switchPage('license');
+        }, 1200);
+      }
+    });
+
+    licenseForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const front = document.getElementById('license-front').files[0];
+      const back = document.getElementById('license-back').files[0];
+      const licNum = document.getElementById('license-number').value.trim();
+
+      if (!front || !back || !licNum) {
+        licenseMsg.textContent = translations[currentLang].licenseError;
+        licenseMsg.style.color = 'red';
+        return;
+      }
+      userData.licenseFront = front;
+      userData.licenseBack = back;
+      userData.licenseNumber = licNum;
+
+      licenseMsg.textContent = translations[currentLang].licenseSuccess;
+      licenseMsg.style.color = 'var(--accent-color)';
+
+      // Proceed to personal details page after delay
+      setTimeout(() => {
+        switchPage('personal');
+      }, 1000);
+    });
+
+    personalForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const pd = {
+        name: document.getElementById('personal-name').value.trim(),
+        dob: document.getElementById('personal-dob').value.trim(),
+        address: document.getElementById('personal-address').value.trim(),
+        aadhaar: document.getElementById('personal-aadhaar').value.trim(),
+        contact: document.getElementById('personal-contact').value.trim(),
+        emergencyContact: document.getElementById('personal-emergency').value.trim(),
+        nationality: document.getElementById('personal-nationality').value.trim(),
+        experience: document.getElementById('personal-experience').value.trim()
+      };
+      // Simple validation
+      const allFilled = Object.values(pd).every(v => v !== '');
+      if(!allFilled){
+        personalMsg.textContent = translations[currentLang].personalError;
+        personalMsg.style.color = 'red';
+        return;
+      }
+      userData.personalDetails = pd;
+      personalMsg.textContent = translations[currentLang].personalSuccess;
+      personalMsg.style.color = 'var(--accent-color)';
+      // Update dashboard and go to dashboard
+      updateDashboard();
+      setTimeout(() => { switchPage('dashboard'); }, 1000);
+    });
+
+    document.getElementById('search-buses-btn').addEventListener('click', () => {
+      const src = sourceInput.value.trim();
+      const dst = destInput.value.trim();
+      if (!src || !dst) {
+        busCountDisplay.textContent = '';
+        return;
+      }
+      const count = getBusCountOnRoute(src, dst);
+      userData.source = src;
+      userData.destination = dst;
+      busCountDisplay.textContent = translations[currentLang].busesFoundMsg(count);
+    });
+
+    showRouteBtn.addEventListener('click', () => {
+      const busNo = busNumberInput.value.trim();
+      const src = userData.source;
+      const dst = userData.destination;
+      if (!busNo || !src || !dst) {
+        busRouteResult.textContent = translations[currentLang].routeNotFoundMsg;
+        return;
+      }
+      const routeInfo = getRouteForBus(busNo, src, dst);
+      busRouteResult.innerHTML = routeInfo || translations[currentLang].routeNotFoundMsg;
+    });
+
+    langSelect.addEventListener('change', e => {
+      currentLang = e.target.value;
+      translateUI();
+      clearMessages();
+    });
+
+    darkToggle.addEventListener('click', () => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        darkToggle.textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        darkToggle.textContent = '☀️';
+      }
+    });
+
+    // Initialize button states
+    loginBtn.disabled = true;
+    loginOtpInput.disabled = true;
+  }
+
+  function updateDashboard() {
+    const pd = userData.personalDetails;
+    profileDisplay.name.textContent = pd.name || '-';
+    profileDisplay.dob.textContent = pd.dob || '-';
+    profileDisplay.address.textContent = pd.address || '-';
+    profileDisplay.aadhaar.textContent = pd.aadhaar || '-';
+    profileDisplay.contact.textContent = pd.contact || '-';
+    profileDisplay.emergency.textContent = pd.emergencyContact || '-';
+    profileDisplay.nationality.textContent = pd.nationality || '-';
+    profileDisplay.experience.textContent = pd.experience || '-';
+  }
+
+  function clearMessages() {
+    loginMsg.textContent = licenseMsg.textContent = personalMsg.textContent = busCountDisplay.textContent = busRouteResult.textContent = '';
+  }
+
+  // Start app
+  init();
+})();
+</script>
+
+</body>
+</html>

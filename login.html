@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Punjab Bus Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body class="login-background light-mode" data-lang="en">
+  <div class="login-container">
+    <div class="login-box">
+      <h2 data-key="login-title">Login</h2>
+      <form id="loginForm" class="login-form">
+        <div class="input-group">
+          <label for="email" data-key="login-email-label">Email</label>
+          <input type="email" id="email" name="email" placeholder="" data-key-placeholder="login-email-placeholder" required />
+        </div>
+        <div class="input-group">
+          <label for="password" data-key="login-password-label">Password</label>
+          <input type="password" id="password" name="password" placeholder="" data-key-placeholder="login-password-placeholder" required />
+        </div>
+        <button type="submit" class="login-btn" data-key="login-button">Login</button>
+        <p class="message" id="loginMessage"></p>
+      </form>
+      <p><a href="index.html" data-key="back-home">Back to Home</a></p>
+      <div class="language-theme-selectors">
+        <select id="languageSelect" class="lang-select">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="pa">ਪੰਜਾਬੀ</option>
+        </select>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
