@@ -756,3 +756,125 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
 }
+/* Login Page Styles */
+
+body.login-background {
+  background-color: rgb(102, 126, 234);
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-color);
+  padding: 2rem;
+}
+
+.login-box {
+  background: var(--background-color);
+  padding: 2.5rem 3rem;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-medium);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 1.8rem;
+  color: var(--text-primary);
+  font-size: 2rem;
+}
+
+.login-form .input-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border-radius: 0.6rem;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-primary);
+  transition: border-color 0.3s ease;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px var(--primary-color);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #1d4ed8;
+}
+
+.message {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.language-theme-selectors {
+  margin-top: 1.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lang-select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+.login-link {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  margin-left: 1rem;
+}
+.login-link:hover {
+  background: #1d4ed8;
+}
+.logo img {
+    height: 56px;
+    width: auto;
+    display: block;
+}
+html {
+  scroll-behavior: smooth;
+
+.captain-section {
+  padding: 2rem 0;
+  background: #f9fafb;
+}
+}

@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="translations.js"></script>
+
 </head>
 <body class="light-mode" data-lang="en">
     <!-- Header -->
@@ -17,22 +19,26 @@
         <div class="container">
             <div class="nav-brand">
                 <div class="logo">
-                    <i class="fas fa-bus"></i>
-                    <span data-key="site-title">Punjab Bus Tracker</span>
-                </div>
+    <i class="fas fa-bus"></i>
+    <span data-key="site-title">BUS MANTRA</span>
+</div>
+
             </div>
             
             <nav class="nav-menu">
                 <ul class="nav-links">
                     <li><a href="#home" data-key="nav-home">Home</a></li>
-                    <li><a href="#search" data-key="nav-search">Search</a></li>
                     <li><a href="#routes" data-key="nav-routes">Routes</a></li>
-                    <li><a href="#about" data-key="nav-about">About</a></li>
+                    <li><a href="#about-section">About</a></li>
+                    <li><a href="#captain-section" id="nav-captain" data-key="nav-captain">Captain</a></li> <!-- Added -->
+                    
                 </ul>
             </nav>
+            
 
             <div class="header-controls">
                 <!-- Language Selector -->
+                  <a href="login.html" class="login-link" data-key="nav-login">Login</a>
                 <div class="language-selector">
                     <select id="languageSelect" class="lang-select">
                         <option value="en">English</option>
@@ -58,6 +64,22 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Captain Section -->
+<section id="captain-section" class="captain-section" style="display:none;">
+  <div id="captain-container">
+    <!-- Captain features will be dynamically loaded here -->
+  </div>
+</section>
+
+  <div class="container">
+    <h2>Bus Mantra Captain</h2>
+    <!-- Embed the captain page content adapted to fit here -->
+    <!-- You can integrate your captain feature HTML here as inner content -->
+    <p>Captain login, license upload, profile, dashboard, and route search components will appear here.</p>
+    <!-- For full functional integration, you will need to inject your captain HTML, CSS, JS accordingly -->
+  </div>
+</section>
+
         <!-- Hero Section -->
         <section class="hero" id="home">
             <div class="container">
@@ -179,44 +201,45 @@
         </section>
 
         <!-- Features Section -->
-        <section class="features-section">
-            <div class="container">
-                <h2 data-key="features-title">Why Choose Punjab Bus Tracker?</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-location-dot"></i>
-                        </div>
-                        <h3 data-key="real-time-title">Real-time Tracking</h3>
-                        <p data-key="real-time-desc">Get live location updates of all Punjab buses with GPS accuracy</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <h3 data-key="arrival-time-title">Arrival Predictions</h3>
-                        <p data-key="arrival-time-desc">Know exactly when your bus will arrive at your stop</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-route"></i>
-                        </div>
-                        <h3 data-key="route-info-title">Route Information</h3>
-                        <p data-key="route-info-desc">Complete details about bus routes, stops, and schedules</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <h3 data-key="notifications-title">Smart Notifications</h3>
-                        <p data-key="notifications-desc">Get alerts for delays, route changes, and arrival times</p>
-                    </div>
+<section id="about-section" class="features-section">
+    <div class="container">
+        <h2 data-key="features-title">Why Choose Punjab Bus Tracker?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-location-dot"></i>
                 </div>
+                <h3 data-key="real-time-title">Real-time Tracking</h3>
+                <p data-key="real-time-desc">Get live location updates of all Punjab buses with GPS accuracy</p>
             </div>
-        </section>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 data-key="arrival-time-title">Arrival Predictions</h3>
+                <p data-key="arrival-time-desc">Know exactly when your bus will arrive at your stop</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3 data-key="route-info-title">Route Information</h3>
+                <p data-key="route-info-desc">Complete details about bus routes, stops, and schedules</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3 data-key="notifications-title">Smart Notifications</h3>
+                <p data-key="notifications-desc">Get alerts for delays, route changes, and arrival times</p>
+            </div>
+        </div>
+    </div>
+</section>
+
     </main>
 
     <!-- Footer -->
@@ -264,5 +287,46 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="translations.js"></script>
     <script src="app.js"></script>
+document.addEventListener('DOMContentLoaded', () => {
+  const captainLink = document.getElementById('nav-captain');
+  const captainSection = document.getElementById('captain-section');
+  const captainContainer = document.getElementById('captain-container');
+  const mainSections = document.querySelectorAll('main > section:not(#captain-section)');
+
+  captainLink.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    // Hide other sections
+    mainSections.forEach(section => section.style.display = 'none');
+
+    // Show captain section
+    captainSection.style.display = 'block';
+
+    // Load captain.html content only if not loaded already
+    if (!captainContainer.innerHTML.trim()) {
+      try {
+        const response = await fetch('captain.html');
+        if (response.ok) {
+          const html = await response.text();
+          captainContainer.innerHTML = html;
+
+          // Optionally, initialize any captain JS here after loading content
+        } else {
+          captainContainer.innerHTML = '<p>Failed to load Captain features.</p>';
+        }
+      } catch (error) {
+        captainContainer.innerHTML = '<p>Error loading Captain features.</p>';
+        console.error(error);
+      }
+    }
+  });
+
+  // Show main content and hide captain when Home clicked
+  document.getElementById('nav-home').addEventListener('click', () => {
+    captainSection.style.display = 'none';
+    mainSections.forEach(section => section.style.display = 'block');
+  });
+});
+    
 </body>
 </html>
